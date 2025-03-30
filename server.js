@@ -5,8 +5,8 @@ const multer = require('multer');
 const path = require('path');
 require('dotenv').config();
 
-const authRoutes = require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
+const authRoutes = require('./src/routes/authRoutes');
+const productRoutes = require('./src/routes/productRoutes');
 
 
 const app = express();
@@ -37,8 +37,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes); 
 
 
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("MongoDB connected successfully");
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
