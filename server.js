@@ -5,8 +5,8 @@ const multer = require('multer');
 const path = require('path');
 require('dotenv').config();
 
-const authRoutes = require('./src/routes/authRoutes');
-const productRoutes = require('./src/routes/productRoutes');
+const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 
 const app = express();
