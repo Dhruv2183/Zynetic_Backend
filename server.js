@@ -66,8 +66,9 @@ app.use(express.json());
 app.options('*', cors(corsOptions));
 
 // Routes
-app.get('/api/auth', authRoutes);
-app.get('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+
 
 // Health Check
 app.get('/', (req, res) => {
