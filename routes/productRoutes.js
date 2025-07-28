@@ -99,6 +99,20 @@ const Product = require('../models/Product');
 const upload = require('../utils/cloudinaryUpload');
 const router = express.Router();
 
+// If using 'require' (CommonJS):
+const cors = require('cors');
+
+// --- CORS Middleware ---
+const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.vercel.app'];
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+};
+
+// This should be at the start of every handler file:
+router.use(cors(corsOptions));
+
+
 // Create Product
 router.post('/', upload.single('image'), async (req, res) => {
   try {
