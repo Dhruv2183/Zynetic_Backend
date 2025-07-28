@@ -48,16 +48,10 @@ const app = express();
 const PORT = process.env.PORT || 5002;
 
 // ✅ Correct CORS Configuration
-const corsOptions = {
-  origin: 'http://localhost:3000' || 'http://localhost:3000/signup', // OR use: (origin, callback) => callback(null, true) for dynamic origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 204
-};
+
 
 // ✅ Apply CORS Middleware Globally
-app.use(cors(corsOptions));
+app.use(cors());
 
 // ✅ Ensure Express parses JSON before routing
 app.use(express.json());
