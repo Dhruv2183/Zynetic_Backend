@@ -7,8 +7,26 @@ require("dotenv").config();
 
 const router = express.Router();
 
+// Handle preflight requests for all routes in this router
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+
+
+
 
 router.post("/signup", async (req, res) => {
+    console.log("Received signup request from:", req.headers.origin); 
     const { name, email, password, role, adminSecret } = req.body;
 
     if (!name || !email || !password) {

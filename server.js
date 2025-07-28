@@ -34,6 +34,8 @@
 //   res.send('Server is running...');
 // });
 
+
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -45,57 +47,58 @@ const productRoutes = require('./routes/productRoutes');
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-// Middleware
-// Middleware
-const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.vercel.app'];
+// ✅ Correct CORS Configuration
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
+  origin: 'http://localhost:3000', // OR use: (origin, callback) => callback(null, true) for dynamic origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 204
 };
 
+// ✅ Apply CORS Middleware Globally
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
+// ✅ Ensure Express parses JSON before routing
+app.use(express.json());
+
+// ✅ Preflight OPTIONS request for all routes
+app.options('*', cors(corsOptions));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 
-// Health check endpoint
+// Health Check
 app.get('/', (req, res) => {
   res.send('Server is running...');
 });
 
-// Database connection with serverless optimization
+// MongoDB Connection
 const connectDB = async () => {
   try {
-    if (mongoose.connection.readyState === 0) { // Only connect if not already connected
+    if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         serverSelectionTimeoutMS: 5000,
-        maxPoolSize: 10 // Connection pool size
+        maxPoolSize: 10,
       });
-      console.log("MongoDB connected successfully");
+      console.log('MongoDB connected successfully');
     }
   } catch (err) {
-    console.error("Database connection error:", err.message);
+    console.error('Database connection error:', err.message);
   }
 };
 
-// Connect to DB and start server only in development
+// ✅ Start Server (Dev only)
 if (process.env.NODE_ENV !== 'production') {
   connectDB().then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`Server running at http://localhost:${PORT}`)
+    );
   });
 }
 
-// Export the Express app for Vercel
+// ✅ Export Express app for Vercel
 module.exports = app;
