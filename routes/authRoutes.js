@@ -16,16 +16,16 @@ router.use((req, res, next) => {
 
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
-  }
+ }
 
-  next();
+ next();
 });
 
 
 
 
 
-router.post("/api/signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
     console.log("Received signup request from:", req.headers.origin); 
     const { name, email, password, role, adminSecret } = req.body;
 
@@ -77,7 +77,7 @@ router.post("/api/signup", async (req, res) => {
 });
 
 
-router.post("/api/login", async (req, res) => {
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
