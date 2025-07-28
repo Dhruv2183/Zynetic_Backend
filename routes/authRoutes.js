@@ -7,19 +7,6 @@ require("dotenv").config();
 
 const router = express.Router();
 
-// If using 'require' (CommonJS):
-const cors = require('cors');
-
-// --- CORS Middleware ---
-const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.vercel.app'];
-const corsOptions = {
-  origin: allowedOrigins,
-  credentials: true,
-};
-
-// This should be at the start of every handler file:
-router.use(cors(corsOptions));
-
 
 router.post("/signup", async (req, res) => {
     const { name, email, password, role, adminSecret } = req.body;

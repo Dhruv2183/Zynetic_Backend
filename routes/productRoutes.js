@@ -99,20 +99,6 @@ const Product = require('../models/Product');
 const upload = require('../utils/cloudinaryUpload');
 const router = express.Router();
 
-// If using 'require' (CommonJS):
-const cors = require('cors');
-
-// --- CORS Middleware ---
-const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.vercel.app'];
-const corsOptions = {
-  origin: allowedOrigins,
-  credentials: true,
-};
-
-// This should be at the start of every handler file:
-router.use(cors(corsOptions));
-
-
 // Create Product
 router.post('/', upload.single('image'), async (req, res) => {
   try {
@@ -166,50 +152,38 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Update Product
-// Update Product
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const { name, description, price, category, stock } = req.body;
 
-    // Parse size as array safely
-    let size = [];
-    if (Array.isArray(req.body.size)) {
-      size = req.body.size;
-    } else if (typeof req.body.size === 'string') {
-      size = [req.body.size];
+    const size = Array.isArray(req.body.size)
+      ? req.body.size
+      : req.body.size
+      ? [req.body.size]
+      : [];
+
+    const updateFields = {
+      name,
+      description,
+      price,
+      category,
+      stock,
+      size,
+    };
+
+    if (req.file) {
+      updateFields.image = req.file.path;
     }
 
-    // Build update object dynamically
-    const updateFields = {};
-    if (name !== undefined) updateFields.name = name;
-    if (description !== undefined) updateFields.description = description;
-    if (price !== undefined) updateFields.price = parseFloat(price);
-    if (category !== undefined) updateFields.category = category;
-    if (stock !== undefined) updateFields.stock = parseInt(stock);
-    if (size.length > 0) updateFields.size = size;
-    if (req.file) updateFields.image = req.file.path;
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateFields, { new: true });
 
-    // Perform the update
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      { $set: updateFields },
-      { new: true }
-    );
+    if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
 
-    if (!updatedProduct) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    res.status(200).json(updatedProduct);
+    res.json(updatedProduct);
   } catch (err) {
     console.error("❌ Error updating product:", err);
-    res.status(500).json({
-      message: 'Error updating product',
-      error: err?.message || String(err),
-    });
+    res.status(500).json({ message: 'Error updating product', error: err.message || String(err) });
   }
 });
-
-
 
 module.exports = router;
