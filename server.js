@@ -48,21 +48,8 @@ const app = express();
 const PORT = process.env.PORT || 5002;
 
 // ✅ Correct CORS Configuration
-const allowedOrigins = [
-  'http://localhost:3000', // Your local frontend
-  'https://your-production-frontend-url.com' // Your deployed frontend URL
-];
-
 const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin: 'http://localhost:3000', // OR use: (origin, callback) => callback(null, true) for dynamic origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -77,8 +64,6 @@ app.use(express.json());
 
 // ✅ Preflight OPTIONS request for all routes
 app.options('*', cors(corsOptions));
-
-connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
